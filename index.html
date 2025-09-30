@@ -67,6 +67,12 @@
       background: #00ffc3;
       color: #000;
     }
+    .section-title {
+      margin-top: 40px;
+      font-size: 1.2em;
+      color: #00ffc3;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -102,7 +108,8 @@
     <div class="summary" id="summaryText">Total Trades: 0</div>
   </div>
 
-  <table id="tradeTable">
+  <div class="section-title">📋 All Trades</div>
+  <table id="allTrades">
     <thead>
       <tr>
         <th>Time</th>
@@ -116,8 +123,40 @@
     <tbody></tbody>
   </table>
 
+  <div class="section-title">✅ Wins vs ❌ Losses</div>
+  <table id="resultBreakdown">
+    <thead>
+      <tr>
+        <th>Result</th>
+        <th>Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Win</td><td id="winCount">0</td></tr>
+      <tr><td>Loss</td><td id="lossCount">0</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">🏹 Wins by Stoploss Type</div>
+  <table id="stoplossWins">
+    <thead>
+      <tr>
+        <th>Stoploss Type</th>
+        <th>Win Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Candle</td><td id="candleWins">0</td></tr>
+      <tr><td>Wick</td><td id="wickWins">0</td></tr>
+    </tbody>
+  </table>
+
   <script>
     let totalTrades = 0;
+    let winCount = 0;
+    let lossCount = 0;
+    let candleWins = 0;
+    let wickWins = 0;
 
     function submitTrade() {
       const entry = document.getElementById("entryType").value;
@@ -131,9 +170,9 @@
       document.getElementById("summaryText").innerText =
         `✅ Logged ${count} ${entry} trade(s) with ${stoploss} stoploss — ${result}. Total Trades: ${totalTrades}`;
 
-      const table = document.getElementById("tradeTable").getElementsByTagName("tbody")[0];
-      const newRow = table.insertRow();
-
+      // Add to All Trades table
+      const allTable = document.getElementById("allTrades").getElementsByTagName("tbody")[0];
+      const newRow = allTable.insertRow();
       newRow.innerHTML = `
         <td>${timestamp}</td>
         <td>${entry}</td>
@@ -142,6 +181,24 @@
         <td>${count}</td>
         <td>${notes || '-'}</td>
       `;
+
+      // Update result breakdown
+      if (result === "Win") {
+        winCount += count;
+        document.getElementById("winCount").innerText = winCount;
+
+        // Update stoploss win breakdown
+        if (stoploss === "Candle") {
+          candleWins += count;
+          document.getElementById("candleWins").innerText = candleWins;
+        } else if (stoploss === "Wick") {
+          wickWins += count;
+          document.getElementById("wickWins").innerText = wickWins;
+        }
+      } else {
+        lossCount += count;
+        document.getElementById("lossCount").innerText = lossCount;
+      }
     }
   </script>
 
