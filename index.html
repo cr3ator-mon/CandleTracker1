@@ -14,6 +14,26 @@
       text-align: center;
       color: #00ffc3;
     }
+    .tabs {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      padding: 10px 20px;
+      margin: 0 5px;
+      background: #00ffc3;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .section {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
     .tracker-box {
       background: #2c2c3c;
       padding: 20px;
@@ -35,7 +55,7 @@
       background: #444;
       color: #fff;
     }
-    button {
+    button.submit {
       margin-top: 20px;
       padding: 10px;
       width: 100%;
@@ -78,59 +98,86 @@
 <body>
 
   <h1>📊 Candle Trade Tracker</h1>
-  <div class="tracker-box">
-    <label for="entryType">Entry Type</label>
-    <select id="entryType">
-      <option value="First Entry">First Entry</option>
-      <option value="Second Entry">Second Entry</option>
-    </select>
 
-    <label for="stoplossType">Stoploss Type</label>
-    <select id="stoplossType">
-      <option value="Candle">Candle</option>
-      <option value="Wick">Wick</option>
-    </select>
-
-    <label for="result">Result</label>
-    <select id="result">
-      <option value="Win">Win</option>
-      <option value="Loss">Loss</option>
-    </select>
-
-    <button onclick="submitTrade()">Submit Trade</button>
-
-    <div class="summary" id="summaryText">Total Trades: 0</div>
+  <div class="tabs">
+    <button onclick="showSection('entry')">Entry</button>
+    <button onclick="showSection('results')">Results</button>
   </div>
 
-  <div class="section-title">✅ Total Win vs ❌ Loss</div>
-  <table>
-    <thead><tr><th>Result</th><th>Count</th></tr></thead>
-    <tbody>
-      <tr><td>Win</td><td id="winCount">0</td></tr>
-      <tr><td>Loss</td><td id="lossCount">0</td></tr>
-    </tbody>
-  </table>
+  <div id="entry" class="section active">
+    <div class="tracker-box">
+      <label for="setup">Setup</label>
+      <select id="setup">
+        <option value="Setup 1">Setup 1</option>
+        <option value="Setup 2">Setup 2</option>
+        <option value="Setup 3">Setup 3</option>
+      </select>
 
-  <div class="section-title">🏹 Stoploss Type Breakdown</div>
-  <table>
-    <thead><tr><th>Stoploss</th><th>Wins</th><th>Losses</th></tr></thead>
-    <tbody>
-      <tr><td>Candle</td><td id="candleWins">0</td><td id="candleLosses">0</td></tr>
-      <tr><td>Wick</td><td id="wickWins">0</td><td id="wickLosses">0</td></tr>
-    </tbody>
-  </table>
+      <label for="entryType">Entry Type</label>
+      <select id="entryType">
+        <option value="First Entry">First Entry</option>
+        <option value="Second Entry">Second Entry</option>
+      </select>
 
-  <div class="section-title">📌 Entry Type Breakdown</div>
-  <table>
-    <thead><tr><th>Entry Type</th><th>Wins</th><th>Losses</th></tr></thead>
-    <tbody>
-      <tr><td>First Entry</td><td id="firstEntryWins">0</td><td id="firstEntryLosses">0</td></tr>
-      <tr><td>Second Entry</td><td id="secondEntryWins">0</td><td id="secondEntryLosses">0</td></tr>
-    </tbody>
-  </table>
+      <label for="stoplossType">Stoploss Type</label>
+      <select id="stoplossType">
+        <option value="Candle">Candle</option>
+        <option value="Wick">Wick</option>
+      </select>
+
+      <label for="position">Position</label>
+      <select id="position">
+        <option value="Candle">Candle</option>
+        <option value="Half">Half</option>
+      </select>
+
+      <label for="result">Result</label>
+      <select id="result">
+        <option value="Win">Win</option>
+        <option value="Loss">Loss</option>
+      </select>
+
+      <button class="submit" onclick="submitTrade()">Submit Trade</button>
+      <div class="summary" id="summaryText">Total Trades: 0</div>
+    </div>
+  </div>
+
+  <div id="results" class="section">
+    <div class="section-title">✅ Total Win vs ❌ Loss</div>
+    <table>
+      <thead><tr><th>Result</th><th>Count</th></tr></thead>
+      <tbody>
+        <tr><td>Win</td><td id="winCount">0</td></tr>
+        <tr><td>Loss</td><td id="lossCount">0</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">🏹 Stoploss Type Breakdown</div>
+    <table>
+      <thead><tr><th>Stoploss</th><th>Wins</th><th>Losses</th></tr></thead>
+      <tbody>
+        <tr><td>Candle</td><td id="candleWins">0</td><td id="candleLosses">0</td></tr>
+        <tr><td>Wick</td><td id="wickWins">0</td><td id="wickLosses">0</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">📌 Entry Type Breakdown</div>
+    <table>
+      <thead><tr><th>Entry Type</th><th>Wins</th><th>Losses</th></tr></thead>
+      <tbody>
+        <tr><td>First Entry</td><td id="firstEntryWins">0</td><td id="firstEntryLosses">0</td></tr>
+        <tr><td>Second Entry</td><td id="secondEntryWins">0</td><td id="secondEntryLosses">0</td></tr>
+      </tbody>
+    </table>
+  </div>
 
   <script>
     let trades = JSON.parse(localStorage.getItem("trades") || "[]");
+
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
 
     function updateStats() {
       let totalTrades = trades.length;
@@ -175,17 +222,12 @@
     }
 
     function submitTrade() {
+      const setup = document.getElementById("setup").value;
       const entry = document.getElementById("entryType").value;
       const stoploss = document.getElementById("stoplossType").value;
+      const position = document.getElementById("position").value;
       const result = document.getElementById("result").value;
 
-      trades.push({ entry, stoploss, result });
+      trades.push({ setup, entry, stoploss, position, result });
       localStorage.setItem("trades", JSON.stringify(trades));
-      updateStats();
-    }
-
-    updateStats(); // Load saved data on page load
-  </script>
-
-</body>
-</html>
+      updateStats
