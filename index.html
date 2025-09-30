@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Candle Trade Tracker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e1e2f;
+      color: #f0f0f0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #00ffc3;
+    }
+    .tracker-box {
+      background: #2c2c3c;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      margin: auto;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    select, input[type="number"], textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: none;
+      background: #444;
+      color: #fff;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      background: #00ffc3;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .summary {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📊 Candle Trade Tracker</h1>
+  <div class="tracker-box">
+    <label for="entryType">Entry Type</label>
+    <select id="entryType">
+      <option value="First Entry">First Entry</option>
+      <option value="Second Entry">Second Entry</option>
+    </select>
+
+    <label for="stoplossType">Stoploss Type</label>
+    <select id="stoplossType">
+      <option value="Candle">Candle</option>
+      <option value="Wick">Wick</option>
+    </select>
+
+    <label for="result">Result</label>
+    <select id="result">
+      <option value="Win">Win</option>
+      <option value="Loss">Loss</option>
+    </select>
+
+    <label for="count">Number of Trades</label>
+    <input type="number" id="count" value="1" min="1">
+
+    <label for="notes">Notes (optional)</label>
+    <textarea id="notes" rows="3" placeholder="Add any strategy notes or observations..."></textarea>
+
+    <button onclick="submitTrade()">Submit Trade</button>
+
+    <div class="summary" id="summaryText">Total Trades: 0</div>
+  </div>
+
+  <script>
+    let totalTrades = 0;
+    const tradeLog = [];
+
+    function submitTrade() {
+      const entry = document.getElementById("entryType").value;
+      const stoploss = document.getElementById("stoplossType").value;
+      const result = document.getElementById("result").value;
+      const count = parseInt(document.getElementById("count").value);
+      const notes = document.getElementById("notes").value;
+
+      totalTrades += count;
+
+      tradeLog.push({
+        entry,
+        stoploss,
+        result,
+        count,
+        notes,
+        timestamp: new Date().toLocaleString()
+      });
+
+      document.getElementById("summaryText").innerText =
+        `✅ Logged ${count} ${entry} trade(s) with ${stoploss} stoploss — ${result}. Total Trades: ${totalTrades}`;
+    }
+  </script>
+
+</body>
+</html>
