@@ -51,6 +51,22 @@
       text-align: center;
       font-size: 1.1em;
     }
+    table {
+      margin-top: 30px;
+      width: 100%;
+      border-collapse: collapse;
+      background: #2c2c3c;
+      color: #fff;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #444;
+      text-align: center;
+    }
+    th {
+      background: #00ffc3;
+      color: #000;
+    }
   </style>
 </head>
 <body>
@@ -86,9 +102,22 @@
     <div class="summary" id="summaryText">Total Trades: 0</div>
   </div>
 
+  <table id="tradeTable">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Entry</th>
+        <th>Stoploss</th>
+        <th>Result</th>
+        <th>Count</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
   <script>
     let totalTrades = 0;
-    const tradeLog = [];
 
     function submitTrade() {
       const entry = document.getElementById("entryType").value;
@@ -96,20 +125,23 @@
       const result = document.getElementById("result").value;
       const count = parseInt(document.getElementById("count").value);
       const notes = document.getElementById("notes").value;
+      const timestamp = new Date().toLocaleString();
 
       totalTrades += count;
-
-      tradeLog.push({
-        entry,
-        stoploss,
-        result,
-        count,
-        notes,
-        timestamp: new Date().toLocaleString()
-      });
-
       document.getElementById("summaryText").innerText =
         `✅ Logged ${count} ${entry} trade(s) with ${stoploss} stoploss — ${result}. Total Trades: ${totalTrades}`;
+
+      const table = document.getElementById("tradeTable").getElementsByTagName("tbody")[0];
+      const newRow = table.insertRow();
+
+      newRow.innerHTML = `
+        <td>${timestamp}</td>
+        <td>${entry}</td>
+        <td>${stoploss}</td>
+        <td>${result}</td>
+        <td>${count}</td>
+        <td>${notes || '-'}</td>
+      `;
     }
   </script>
 
