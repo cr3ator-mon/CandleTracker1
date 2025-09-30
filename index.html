@@ -26,7 +26,7 @@
       margin-top: 15px;
       font-weight: bold;
     }
-    select, textarea {
+    select {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
@@ -97,27 +97,10 @@
       <option value="Loss">Loss</option>
     </select>
 
-    <label for="notes">Notes (optional)</label>
-    <textarea id="notes" rows="3" placeholder="Add any strategy notes or observations..."></textarea>
-
     <button onclick="submitTrade()">Submit Trade</button>
 
     <div class="summary" id="summaryText">Total Trades: 0</div>
   </div>
-
-  <div class="section-title">📋 All Trades</div>
-  <table id="allTrades">
-    <thead>
-      <tr>
-        <th>Time</th>
-        <th>Entry</th>
-        <th>Stoploss</th>
-        <th>Result</th>
-        <th>Notes</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
 
   <div class="section-title">✅ Total Win vs ❌ Loss</div>
   <table>
@@ -154,8 +137,7 @@
 
   <script>
     let totalTrades = 0;
-    let winCount = 0;
-    let lossCount = 0;
+    let winCount = 0, lossCount = 0;
     let candleWins = 0, candleLosses = 0;
     let wickWins = 0, wickLosses = 0;
     let firstEntryWins = 0, firstEntryLosses = 0;
@@ -165,23 +147,10 @@
       const entry = document.getElementById("entryType").value;
       const stoploss = document.getElementById("stoplossType").value;
       const result = document.getElementById("result").value;
-      const notes = document.getElementById("notes").value;
-      const timestamp = new Date().toLocaleString();
 
       totalTrades++;
       document.getElementById("summaryText").innerText =
         `✅ Logged ${entry} trade with ${stoploss} stoploss — ${result}. Total Trades: ${totalTrades}`;
-
-      // Add to All Trades table
-      const table = document.getElementById("allTrades").getElementsByTagName("tbody")[0];
-      const newRow = table.insertRow();
-      newRow.innerHTML = `
-        <td>${timestamp}</td>
-        <td>${entry}</td>
-        <td>${stoploss}</td>
-        <td>${result}</td>
-        <td>${notes || '-'}</td>
-      `;
 
       // Win vs Loss
       if (result === "Win") {
