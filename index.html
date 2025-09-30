@@ -104,9 +104,7 @@
 
   <div class="section-title">✅ Total Win vs ❌ Loss</div>
   <table>
-    <thead>
-      <tr><th>Result</th><th>Count</th></tr>
-    </thead>
+    <thead><tr><th>Result</th><th>Count</th></tr></thead>
     <tbody>
       <tr><td>Win</td><td id="winCount">0</td></tr>
       <tr><td>Loss</td><td id="lossCount">0</td></tr>
@@ -115,9 +113,7 @@
 
   <div class="section-title">🏹 Stoploss Type Breakdown</div>
   <table>
-    <thead>
-      <tr><th>Stoploss</th><th>Wins</th><th>Losses</th></tr>
-    </thead>
+    <thead><tr><th>Stoploss</th><th>Wins</th><th>Losses</th></tr></thead>
     <tbody>
       <tr><td>Candle</td><td id="candleWins">0</td><td id="candleLosses">0</td></tr>
       <tr><td>Wick</td><td id="wickWins">0</td><td id="wickLosses">0</td></tr>
@@ -126,9 +122,7 @@
 
   <div class="section-title">📌 Entry Type Breakdown</div>
   <table>
-    <thead>
-      <tr><th>Entry Type</th><th>Wins</th><th>Losses</th></tr>
-    </thead>
+    <thead><tr><th>Entry Type</th><th>Wins</th><th>Losses</th></tr></thead>
     <tbody>
       <tr><td>First Entry</td><td id="firstEntryWins">0</td><td id="firstEntryLosses">0</td></tr>
       <tr><td>Second Entry</td><td id="secondEntryWins">0</td><td id="secondEntryLosses">0</td></tr>
@@ -136,69 +130,61 @@
   </table>
 
   <script>
-    let totalTrades = 0;
-    let winCount = 0, lossCount = 0;
-    let candleWins = 0, candleLosses = 0;
-    let wickWins = 0, wickLosses = 0;
-    let firstEntryWins = 0, firstEntryLosses = 0;
-    let secondEntryWins = 0, secondEntryLosses = 0;
+    let trades = JSON.parse(localStorage.getItem("trades") || "[]");
+
+    function updateStats() {
+      let totalTrades = trades.length;
+      let winCount = 0, lossCount = 0;
+      let candleWins = 0, candleLosses = 0;
+      let wickWins = 0, wickLosses = 0;
+      let firstEntryWins = 0, firstEntryLosses = 0;
+      let secondEntryWins = 0, secondEntryLosses = 0;
+
+      trades.forEach(trade => {
+        if (trade.result === "Win") winCount++;
+        else lossCount++;
+
+        if (trade.stoploss === "Candle") {
+          if (trade.result === "Win") candleWins++;
+          else candleLosses++;
+        } else {
+          if (trade.result === "Win") wickWins++;
+          else wickLosses++;
+        }
+
+        if (trade.entry === "First Entry") {
+          if (trade.result === "Win") firstEntryWins++;
+          else firstEntryLosses++;
+        } else {
+          if (trade.result === "Win") secondEntryWins++;
+          else secondEntryLosses++;
+        }
+      });
+
+      document.getElementById("summaryText").innerText = `Total Trades: ${totalTrades}`;
+      document.getElementById("winCount").innerText = winCount;
+      document.getElementById("lossCount").innerText = lossCount;
+      document.getElementById("candleWins").innerText = candleWins;
+      document.getElementById("candleLosses").innerText = candleLosses;
+      document.getElementById("wickWins").innerText = wickWins;
+      document.getElementById("wickLosses").innerText = wickLosses;
+      document.getElementById("firstEntryWins").innerText = firstEntryWins;
+      document.getElementById("firstEntryLosses").innerText = firstEntryLosses;
+      document.getElementById("secondEntryWins").innerText = secondEntryWins;
+      document.getElementById("secondEntryLosses").innerText = secondEntryLosses;
+    }
 
     function submitTrade() {
       const entry = document.getElementById("entryType").value;
       const stoploss = document.getElementById("stoplossType").value;
       const result = document.getElementById("result").value;
 
-      totalTrades++;
-      document.getElementById("summaryText").innerText =
-        `✅ Logged ${entry} trade with ${stoploss} stoploss — ${result}. Total Trades: ${totalTrades}`;
-
-      // Win vs Loss
-      if (result === "Win") {
-        winCount++;
-        document.getElementById("winCount").innerText = winCount;
-      } else {
-        lossCount++;
-        document.getElementById("lossCount").innerText = lossCount;
-      }
-
-      // Stoploss breakdown
-      if (stoploss === "Candle") {
-        if (result === "Win") {
-          candleWins++;
-          document.getElementById("candleWins").innerText = candleWins;
-        } else {
-          candleLosses++;
-          document.getElementById("candleLosses").innerText = candleLosses;
-        }
-      } else {
-        if (result === "Win") {
-          wickWins++;
-          document.getElementById("wickWins").innerText = wickWins;
-        } else {
-          wickLosses++;
-          document.getElementById("wickLosses").innerText = wickLosses;
-        }
-      }
-
-      // Entry breakdown
-      if (entry === "First Entry") {
-        if (result === "Win") {
-          firstEntryWins++;
-          document.getElementById("firstEntryWins").innerText = firstEntryWins;
-        } else {
-          firstEntryLosses++;
-          document.getElementById("firstEntryLosses").innerText = firstEntryLosses;
-        }
-      } else {
-        if (result === "Win") {
-          secondEntryWins++;
-          document.getElementById("secondEntryWins").innerText = secondEntryWins;
-        } else {
-          secondEntryLosses++;
-          document.getElementById("secondEntryLosses").innerText = secondEntryLosses;
-        }
-      }
+      trades.push({ entry, stoploss, result });
+      localStorage.setItem("trades", JSON.stringify(trades));
+      updateStats();
     }
+
+    updateStats(); // Load saved data on page load
   </script>
 
 </body>
