@@ -230,4 +230,10 @@
 
       trades.push({ setup, entry, stoploss, position, result });
       localStorage.setItem("trades", JSON.stringify(trades));
-      updateStats
+      updateStats();
+    }
+
+    updateStats(); // Load saved data on page load
+  </script>
+
+</
