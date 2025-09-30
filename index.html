@@ -124,7 +124,7 @@
   </table>
 
   <div class="section-title">✅ Wins vs ❌ Losses</div>
-  <table id="resultBreakdown">
+  <table>
     <thead>
       <tr>
         <th>Result</th>
@@ -138,7 +138,7 @@
   </table>
 
   <div class="section-title">🏹 Wins by Stoploss Type</div>
-  <table id="stoplossWins">
+  <table>
     <thead>
       <tr>
         <th>Stoploss Type</th>
@@ -151,12 +151,28 @@
     </tbody>
   </table>
 
+  <div class="section-title">📌 Entry Type Breakdown</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Entry Type</th>
+        <th>Trade Count</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>First Entry</td><td id="firstEntryCount">0</td></tr>
+      <tr><td>Second Entry</td><td id="secondEntryCount">0</td></tr>
+    </tbody>
+  </table>
+
   <script>
     let totalTrades = 0;
     let winCount = 0;
     let lossCount = 0;
     let candleWins = 0;
     let wickWins = 0;
+    let firstEntryCount = 0;
+    let secondEntryCount = 0;
 
     function submitTrade() {
       const entry = document.getElementById("entryType").value;
@@ -182,12 +198,11 @@
         <td>${notes || '-'}</td>
       `;
 
-      // Update result breakdown
+      // Result breakdown
       if (result === "Win") {
         winCount += count;
         document.getElementById("winCount").innerText = winCount;
 
-        // Update stoploss win breakdown
         if (stoploss === "Candle") {
           candleWins += count;
           document.getElementById("candleWins").innerText = candleWins;
@@ -198,6 +213,15 @@
       } else {
         lossCount += count;
         document.getElementById("lossCount").innerText = lossCount;
+      }
+
+      // Entry type breakdown
+      if (entry === "First Entry") {
+        firstEntryCount += count;
+        document.getElementById("firstEntryCount").innerText = firstEntryCount;
+      } else if (entry === "Second Entry") {
+        secondEntryCount += count;
+        document.getElementById("secondEntryCount").innerText = secondEntryCount;
       }
     }
   </script>
