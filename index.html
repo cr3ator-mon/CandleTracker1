@@ -26,7 +26,7 @@
       margin-top: 15px;
       font-weight: bold;
     }
-    select, input[type="number"], textarea {
+    select, textarea {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
@@ -97,9 +97,6 @@
       <option value="Loss">Loss</option>
     </select>
 
-    <label for="count">Number of Trades</label>
-    <input type="number" id="count" value="1" min="1">
-
     <label for="notes">Notes (optional)</label>
     <textarea id="notes" rows="3" placeholder="Add any strategy notes or observations..."></textarea>
 
@@ -116,20 +113,16 @@
         <th>Entry</th>
         <th>Stoploss</th>
         <th>Result</th>
-        <th>Count</th>
         <th>Notes</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
-  <div class="section-title">✅ Wins vs ❌ Losses</div>
+  <div class="section-title">✅ Total Win vs ❌ Loss</div>
   <table>
     <thead>
-      <tr>
-        <th>Result</th>
-        <th>Count</th>
-      </tr>
+      <tr><th>Result</th><th>Count</th></tr>
     </thead>
     <tbody>
       <tr><td>Win</td><td id="winCount">0</td></tr>
@@ -137,31 +130,25 @@
     </tbody>
   </table>
 
-  <div class="section-title">🏹 Wins by Stoploss Type</div>
+  <div class="section-title">🏹 Stoploss Type Breakdown</div>
   <table>
     <thead>
-      <tr>
-        <th>Stoploss Type</th>
-        <th>Win Count</th>
-      </tr>
+      <tr><th>Stoploss</th><th>Wins</th><th>Losses</th></tr>
     </thead>
     <tbody>
-      <tr><td>Candle</td><td id="candleWins">0</td></tr>
-      <tr><td>Wick</td><td id="wickWins">0</td></tr>
+      <tr><td>Candle</td><td id="candleWins">0</td><td id="candleLosses">0</td></tr>
+      <tr><td>Wick</td><td id="wickWins">0</td><td id="wickLosses">0</td></tr>
     </tbody>
   </table>
 
   <div class="section-title">📌 Entry Type Breakdown</div>
   <table>
     <thead>
-      <tr>
-        <th>Entry Type</th>
-        <th>Trade Count</th>
-      </tr>
+      <tr><th>Entry Type</th><th>Wins</th><th>Losses</th></tr>
     </thead>
     <tbody>
-      <tr><td>First Entry</td><td id="firstEntryCount">0</td></tr>
-      <tr><td>Second Entry</td><td id="secondEntryCount">0</td></tr>
+      <tr><td>First Entry</td><td id="firstEntryWins">0</td><td id="firstEntryLosses">0</td></tr>
+      <tr><td>Second Entry</td><td id="secondEntryWins">0</td><td id="secondEntryLosses">0</td></tr>
     </tbody>
   </table>
 
@@ -169,59 +156,78 @@
     let totalTrades = 0;
     let winCount = 0;
     let lossCount = 0;
-    let candleWins = 0;
-    let wickWins = 0;
-    let firstEntryCount = 0;
-    let secondEntryCount = 0;
+    let candleWins = 0, candleLosses = 0;
+    let wickWins = 0, wickLosses = 0;
+    let firstEntryWins = 0, firstEntryLosses = 0;
+    let secondEntryWins = 0, secondEntryLosses = 0;
 
     function submitTrade() {
       const entry = document.getElementById("entryType").value;
       const stoploss = document.getElementById("stoplossType").value;
       const result = document.getElementById("result").value;
-      const count = parseInt(document.getElementById("count").value);
       const notes = document.getElementById("notes").value;
       const timestamp = new Date().toLocaleString();
 
-      totalTrades += count;
+      totalTrades++;
       document.getElementById("summaryText").innerText =
-        `✅ Logged ${count} ${entry} trade(s) with ${stoploss} stoploss — ${result}. Total Trades: ${totalTrades}`;
+        `✅ Logged ${entry} trade with ${stoploss} stoploss — ${result}. Total Trades: ${totalTrades}`;
 
       // Add to All Trades table
-      const allTable = document.getElementById("allTrades").getElementsByTagName("tbody")[0];
-      const newRow = allTable.insertRow();
+      const table = document.getElementById("allTrades").getElementsByTagName("tbody")[0];
+      const newRow = table.insertRow();
       newRow.innerHTML = `
         <td>${timestamp}</td>
         <td>${entry}</td>
         <td>${stoploss}</td>
         <td>${result}</td>
-        <td>${count}</td>
         <td>${notes || '-'}</td>
       `;
 
-      // Result breakdown
+      // Win vs Loss
       if (result === "Win") {
-        winCount += count;
+        winCount++;
         document.getElementById("winCount").innerText = winCount;
-
-        if (stoploss === "Candle") {
-          candleWins += count;
-          document.getElementById("candleWins").innerText = candleWins;
-        } else if (stoploss === "Wick") {
-          wickWins += count;
-          document.getElementById("wickWins").innerText = wickWins;
-        }
       } else {
-        lossCount += count;
+        lossCount++;
         document.getElementById("lossCount").innerText = lossCount;
       }
 
-      // Entry type breakdown
+      // Stoploss breakdown
+      if (stoploss === "Candle") {
+        if (result === "Win") {
+          candleWins++;
+          document.getElementById("candleWins").innerText = candleWins;
+        } else {
+          candleLosses++;
+          document.getElementById("candleLosses").innerText = candleLosses;
+        }
+      } else {
+        if (result === "Win") {
+          wickWins++;
+          document.getElementById("wickWins").innerText = wickWins;
+        } else {
+          wickLosses++;
+          document.getElementById("wickLosses").innerText = wickLosses;
+        }
+      }
+
+      // Entry breakdown
       if (entry === "First Entry") {
-        firstEntryCount += count;
-        document.getElementById("firstEntryCount").innerText = firstEntryCount;
-      } else if (entry === "Second Entry") {
-        secondEntryCount += count;
-        document.getElementById("secondEntryCount").innerText = secondEntryCount;
+        if (result === "Win") {
+          firstEntryWins++;
+          document.getElementById("firstEntryWins").innerText = firstEntryWins;
+        } else {
+          firstEntryLosses++;
+          document.getElementById("firstEntryLosses").innerText = firstEntryLosses;
+        }
+      } else {
+        if (result === "Win") {
+          secondEntryWins++;
+          document.getElementById("secondEntryWins").innerText = secondEntryWins;
+        } else {
+          secondEntryLosses++;
+          document.getElementById("secondEntryLosses").innerText = secondEntryLosses;
+        }
       }
     }
   </script>
